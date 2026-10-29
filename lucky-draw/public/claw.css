@@ -1,0 +1,33 @@
+/* Native SVG and Web Animations keep the draw responsive without a motion library. */
+.claw-machine { max-width: 380px; margin: 0 auto; padding: 24px; background: #dce9ff; border-radius: 18px; }
+.machine-scene { display: block; width: 100%; height: auto; border-radius: 14px; overflow: hidden; }
+.machine-ticket { color: #83a9e1; fill: #e5eeff; transition: opacity .2s; }
+.machine-ticket:nth-child(3n+2) { fill: #8cb2ed; color: #dce9ff; }
+.machine-ticket:nth-child(3n) { fill: #bbd2f6; color: #759bd5; }
+.machine-ticket:last-child { fill: #333d4b; color: #fff; }
+.machine-ticket.is-picked { opacity: 0; }
+.ticket-title { fill: currentColor; text-anchor: middle; font: 800 18px 'Nunito', sans-serif; }
+.claw-finger { fill: none; stroke: #6296e5; stroke-width: 9; stroke-linecap: round; transform-origin: 180px 100px; transition: transform .22s ease; }
+#claw-cable { transform-origin: 180px 32px; }
+#claw-ticket { opacity: 0; color: #fff; fill: #333d4b; }
+.is-lifting #claw-ticket, .is-complete #claw-ticket { opacity: 1; }
+.is-lifting .finger-left, .is-complete .finger-left { transform: rotate(-18deg); }
+.is-lifting .finger-right, .is-complete .finger-right { transform: rotate(18deg); }
+.sake-theme .claw-machine .primary { margin-top: 24px; background: #fff; color: #1b64da; border-radius: 999px; }
+.sake-theme .claw-machine .primary:hover:not(:disabled) { background: #f5f8ff; }
+.sake-theme .claw-machine .primary:disabled { color: #7292bb; }
+.sake-theme .claw-machine + .draw-feedback { margin: 20px 0 0; }
+.sake-theme .change-code:disabled { opacity: .5; cursor: wait; text-decoration: none; }
+@media (min-width: 781px) {
+  .sake-theme .event-layout { align-items: stretch; }
+  .sake-theme .event-info .how { flex-grow: 1; }
+  .sake-theme .draw-section { display: flex; flex-direction: column; }
+  .sake-theme .draw-section .claw-machine { width: 100%; flex-shrink: 0; margin-block: auto; }
+}
+@media (max-width: 780px) {
+  .claw-machine { padding: 18px; border-radius: 16px; }
+  .sake-theme .claw-machine .primary { margin-top: 18px; min-height: 48px; padding: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .claw-finger, .machine-ticket { transition: none; }
+}

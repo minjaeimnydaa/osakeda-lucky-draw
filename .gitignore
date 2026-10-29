@@ -1,0 +1,24 @@
+# Track the two event projects, not unrelated workspace tools or drafts.
+/*
+!/.gitignore
+!/README.md
+!/lucky-draw/
+!/lucky-draw-v2/
+
+**/node_modules/
+**/.env*
+!**/.env.example
+**/.data/
+**/.vercel/
+**/test-results/
+**/coverage/
+**/previews/
+**/exports/
+**/*.sqlite*
+**/*.db
+**/*.db-*
+**/*.csv
+**/*.log
+**/*.zip
+**/.DS_Store
+**/Thumbs.db

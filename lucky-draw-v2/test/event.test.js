@@ -1,0 +1,92 @@
+import { test, after } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { randomBytes } from 'node:crypto';
+process.env.SESSION_SECRET = randomBytes(32).toString('hex');
+process.env.ADMIN_PASSWORD = randomBytes(20).toString('hex');
+delete process.env.DATABASE_URL; delete process.env.VERCEL;
+process.env.NODE_ENV = 'test';
+const temp = mkdtempSync(join(tmpdir(), 'osakeda-test-'));
+process.env.SQLITE_PATH = join(temp,'events.sqlite');
+const { initialize, getEvent, enter, draw, claim, adminData, issueCodes, saveEvent, cloneEvent, revokeCode, fulfill, rateLimit, dayKey } = await import('../lib/event.js');
+const { database } = await import('../lib/db.js');
+await initialize();
+after(async () => { (await database()).close(); rmSync(temp, { recursive:true, force:true }); });
+async function fixture(chance = 100, total = 1) {
+  const { events } = await adminData(); const source = events.find(e => e.slug === 'lucky-days');
+  const cloned = await cloneEvent(source.id);
+  const config = structuredClone(source.config);
+  config.status = 'active'; config.prizes.forEach((p,i) => { p.total = i ? 0 : total; p.chance = i ? 0 : chance; });
+  await saveEvent(cloned.id, config);
+  const codes = await issueCodes(cloned.id, Array.from({ length:60 }, (_,i) => `customer-${i}`));
+  return { ...cloned, config, codes, sessions:await Promise.all(codes.map(c => enter(cloned.slug, c.code))) };
+}
+test('Korea day rollover', () => { assert.equal(dayKey(new Date('2026-10-27T14:59:59Z')), '2026-10-27'); assert.equal(dayKey(new Date('2026-10-27T15:00:00Z')), '2026-10-28'); });
+test('server draws, concurrent inventory, one win and email recovery', async () => {
+  const f = await fixture();
+  const results = await Promise.allSettled(f.sessions.map((s,i) => draw(f.slug,s,i%9+1)));
+  assert.equal(results.filter(r => r.status === 'fulfilled' && r.value.prize).length,1);
+  assert.equal(results.filter(r => r.status === 'rejected').length,59);
+  const winnerIndex = results.findIndex(r => r.status === 'fulfilled');
+  const won = results[winnerIndex].value;
+  assert.equal((await draw(f.slug,f.sessions[winnerIndex],9)).id,won.id);
+  await assert.rejects(claim(f.slug,f.sessions[winnerIndex],'invalid',true));
+  await assert.rejects(claim(f.slug,f.sessions[winnerIndex],'test@example.com',false));
+  await claim(f.slug,f.sessions[winnerIndex],'test@example.com',true);
+  const recovered = await getEvent(f.slug,f.sessions[winnerIndex]);
+  assert.equal(recovered.result.claimed,true); assert.equal(recovered.soldOut,true);
+  assert.equal(recovered.prizes[0].remaining,0);
+  assert.equal(recovered.prizes[0].chance,undefined);
+  await fulfill(won.id); assert.equal((await getEvent(f.slug,f.sessions[winnerIndex])).result.fulfilled,true);
+  await assert.rejects(fulfill(won.id));
+  const reduced = structuredClone(f.config); reduced.prizes[0].total = 0;
+  await assert.rejects(saveEvent(f.id,reduced));
+  const changed = structuredClone(f.config); changed.prizes[0].chance = 50;
+  await assert.rejects(saveEvent(f.id,changed));
+});
+test('same customer shares daily limit across different codes; next Korean day resets', async () => {
+  const f = await fixture(0);
+  const [extra] = await issueCodes(f.id, ['customer-0']);
+  const secondSession = await enter(f.slug,extra.code);
+  const [a,b] = await Promise.all([draw(f.slug,f.sessions[0],1),draw(f.slug,secondSession,8)]);
+  assert.equal(a.id,b.id); assert.equal(a.prize,null);
+  const tomorrow = new Date(Date.now()+86400000);
+  const next = await draw(f.slug,secondSession,3,tomorrow);
+  assert.notEqual(next.id,a.id);
+  const wrongEvent = (await adminData()).events.find(e => e.slug === 'lucky-days');
+  await assert.rejects(draw(wrongEvent.slug, secondSession,1));
+  const code = (await adminData()).codes.find(c => c.event_id === f.id);
+  await revokeCode(code.id);
+  // At least the selected revoked identity is rejected on subsequent access.
+  const revokedSession = { event:f.id,code:code.id };
+  await assert.rejects(draw(f.slug,revokedSession,1));
+});
+test('invalid and inactive requests consume no entry; start inclusive/end exclusive', async () => {
+  const f = await fixture(0);
+  await assert.rejects(draw(f.slug,null,1));
+  await assert.rejects(draw(f.slug,f.sessions[0],10));
+  await assert.rejects(enter(f.slug,'invented-code'));
+  await assert.rejects(draw(f.slug,f.sessions[0],1,new Date(Date.parse(f.config.start)-1)));
+  await assert.rejects(draw(f.slug,f.sessions[0],1,new Date(f.config.end)));
+  const first = await draw(f.slug,f.sessions[0],1,new Date(f.config.start));
+  assert.equal(first.card,1);
+  const clone = await cloneEvent(f.id); const publicClone = await getEvent(clone.slug, f.sessions[0]);
+  assert.equal(publicClone.status,'draft'); assert.equal(publicClone.result,null); assert.equal(publicClone.identified,false);
+});
+test('parallel duplicate request is idempotent and still only one win on next day', async () => {
+  const f = await fixture(100,10);
+  const answers = await Promise.all(Array.from({length:40},(_,i) => draw(f.slug,f.sessions[0],i%9+1)));
+  assert.equal(new Set(answers.map(a => a.id)).size,1);
+  const next = await draw(f.slug,f.sessions[0],7,new Date(Date.now()+86400000)); assert.equal(next.id,answers[0].id);
+  assert.equal((await getEvent(f.slug,f.sessions[0])).prizes[0].remaining,9);
+});
+test('settings validation and persistent request throttling', async () => {
+  const f = await fixture(0);
+  const invalid = structuredClone(f.config); invalid.prizes[0].chance = 101;
+  await assert.rejects(saveEvent(f.id,invalid));
+  assert.equal(await rateLimit('login-test',2),true);
+  assert.equal(await rateLimit('login-test',2),true);
+  assert.equal(await rateLimit('login-test',2),false);
+});

@@ -1,0 +1,217 @@
+/* OSAKEDA identity with spacious, rounded app UI inspired by Toss TDS. */
+@font-face { font-family: 'Nunito'; src: url('/fonts/nunito-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nunito'; src: url('/fonts/nunito-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Nunito'; src: url('/fonts/nunito-800.woff2') format('woff2'); font-weight: 800; font-style: normal; font-display: swap; }
+.sake-theme {
+  --paper: #f2f4f6;
+  --white: #fff;
+  --green: #1b64da;
+  --ink: #191f28;
+  --muted: #6b7684;
+  --line: #edf0f3;
+  --brand: #1b64da;
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Nunito', sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  letter-spacing: -.2px;
+}
+.sake-theme :focus-visible { outline-color: #7bafff; }
+.sake-theme .site-header { height: 72px; border: 0; background: #fff; }
+.sake-theme .wordmark { gap: 16px; }
+.sake-theme .wordmark img { display: block; width: 145px; height: auto; }
+.sake-theme .wordmark span { border-color: #e5e8eb; padding-left: 16px; font: 700 10px 'Nunito', sans-serif; letter-spacing: 1px; color: #8b95a1; }
+.sake-theme .shop-link { min-height: 44px; font-size: 13px; color: #6b7684; }
+.sake-theme .event-main { max-width: 1080px; padding-top: 24px; }
+.sake-theme .test-banner { min-height: 48px; gap: 10px; background: #fff; border: 1px solid #e5e8eb; border-radius: 12px; padding: 9px 14px; font-size: 11px; color: #6b7684; }
+.sake-theme .test-banner strong { flex-shrink: 0; padding: 3px 7px; background: #f2f4f6; border-radius: 5px; color: #4e5968; font-size: 10px; font-weight: 650; }
+.sake-theme .test-code { display: inline-flex; align-items: center; gap: 8px; padding: 5px 9px; border-radius: 7px; background: #f7f8fa; color: #8b95a1; white-space: nowrap; }
+.sake-theme .test-code b { margin: 0; font: 700 11px 'Nunito', sans-serif; letter-spacing: .3px; color: #4e5968; }
+.sake-theme .event-intro { display: grid; grid-template-columns: minmax(0, 1fr) 180px; grid-template-areas: 'copy art' 'meta art'; align-items: center; gap: 18px 28px; padding: 32px 0; margin: 0; background: transparent; border: 0; }
+.intro-copy { grid-area: copy; min-width: 0; }
+.sake-theme .intro-copy h1 { font-family: inherit; font-size: clamp(32px, 3.6vw, 42px); font-weight: 750; letter-spacing: -1.6px; line-height: 1.3; margin: 10px 0; overflow-wrap: anywhere; }
+.sake-theme .intro-copy p { font-size: 15px; line-height: 1.6; color: #6b7684; overflow-wrap: anywhere; }
+.sake-theme .eyebrow { color: #6b7684; font-size: 12px; letter-spacing: 0; font-weight: 600; }
+.sake-theme .intro-copy .eyebrow { color: #4e5968; }
+.intro-vignette { grid-area: art; justify-self: end; width: 180px; height: 160px; }
+.intro-vignette svg { display: block; width: 100%; height: 100%; }
+.sake-theme .event-meta { grid-area: meta; min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 10px 14px; margin: 0; text-align: left; }
+.sake-theme .event-status { background: #e8f3ff; color: #1b64da; border-radius: 9px; padding: 7px 11px; font-size: 12px; }
+.sake-theme .event-status.inactive { background: #e5e8eb; color: #6b7684; }
+.sake-theme .event-meta p { margin: 0; font-size: 13px; color: #4e5968; }
+.sake-theme .timezone { margin: 0; padding-left: 14px; border-left: 1px solid #d1d6db; font-size: 11px; color: #8b95a1; }
+.sake-theme .event-layout { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: 24px; }
+.sake-theme .event-info { gap: 24px; }
+.sake-theme .panel { padding: 30px; border: 0; border-radius: 24px; background: #fff; box-shadow: 0 2px 8px #192b3d03; }
+.sake-theme .section-heading h2 { font-family: inherit; font-size: 22px; font-weight: 700; letter-spacing: -.7px; }
+.sake-theme .section-description { font-size: 14px; line-height: 1.6; color: #6b7684; margin-top: 9px; }
+.sake-theme .quiet-tag { padding: 5px 9px; background: #e8f3ff; color: #1b64da; border-radius: 7px; font-size: 11px; font-weight: 600; line-height: 1.5; }
+.sake-theme .prize-list { margin-top: 22px; }
+.sake-theme .prize-item { padding: 22px 0; column-gap: 15px; row-gap: 6px; border-color: #f2f4f6; }
+.sake-theme .prize-symbol { display: flex; flex-direction: column; justify-content: center; gap: 5px; width: 64px; height: 49px; border: 0; border-radius: 10px; background: #e4f1fb; box-shadow: 0 3px 7px #3c6a8610; }
+.sake-theme .prize-item:nth-child(2) .prize-symbol { background: #eef2f8; }
+.sake-theme .prize-item:nth-child(3) .prize-symbol { background: #f1f4f7; }
+.sake-theme .prize-symbol::before, .sake-theme .prize-symbol::after { content: none; }
+.sake-theme .prize-symbol img { display: block; width: 47px; height: auto; }
+.sake-theme .prize-symbol span { font-size: 5px; letter-spacing: .7px; color: #52758b; font-weight: 700; }
+.sake-theme .prize-copy h3 { font-size: 13px; color: #6b7684; line-height: 1.5; }
+.sake-theme .prize-value { font-size: 26px; font-weight: 750; letter-spacing: -.8px; margin-top: 4px; }
+.sake-theme .quantity { font-size: 12px; color: #6b7684; }
+.sake-theme .prize-footnote { align-items: flex-start; border: 0; padding: 16px; margin: 7px -6px -4px; background: #f9fafb; border-radius: 12px; }
+.sake-theme .prize-footnote p { font-size: 11px; line-height: 1.8; }
+.sake-theme .tiny-mark { color: #8b95a1; line-height: 1.8; }
+.sake-theme .steps { margin-top: 28px; }
+.sake-theme .steps li { gap: 15px; padding-bottom: 25px; }
+.sake-theme .steps li:last-child { padding-bottom: 0; }
+.sake-theme .steps li::after { display: none; }
+.sake-theme .steps li>span { width: 30px; height: 30px; background: #f2f4f6; color: #6b7684; font-size: 12px; font-weight: 700; }
+.sake-theme .steps h3 { margin-top: 3px; font-size: 14px; font-weight: 650; }
+.sake-theme .steps p { margin-top: 6px; font-size: 13px; line-height: 1.6; }
+.sake-theme .draw-heading .eyebrow { font-size: 12px; letter-spacing: 0; }
+.sake-theme .draw-section>h2 { font-family: inherit; font-size: 27px; font-weight: 750; letter-spacing: -1px; margin-top: 18px; line-height: 1.45; }
+.sake-theme .day-pill { padding: 7px 10px; background: #f2f4f6; color: #4e5968; border-radius: 8px; font-size: 12px; }
+.sake-theme .participation-steps { margin: 26px 0 24px; gap: 12px; }
+.sake-theme .participation-steps li { gap: 7px; padding-top: 0; border: 0; font-size: 12px; color: #6b7684; }
+.sake-theme .participation-steps li>span { display: grid; place-items: center; flex-shrink: 0; width: 25px; height: 25px; background: #f2f4f6; color: #6b7684; font-size: 10px; font-weight: 700; border-radius: 50%; }
+.sake-theme .participation-steps .completed { color: #6b7684; }
+.sake-theme .participation-steps .completed>span { color: #1b64da; background: #e8f3ff; }
+.sake-theme .participation-steps [aria-current='step'] { color: #1b64da; font-weight: 650; }
+.sake-theme .participation-steps [aria-current='step']>span { background: #1b64da; color: #fff; }
+.sake-theme .card-grid { padding: 14px; max-width: 380px; gap: 12px; border: 0; border-radius: 20px; background: #f5f7f9; }
+.sake-theme .draw-card { background: #fff; border: 1px solid transparent; border-radius: 14px; color: #4e5968; box-shadow: 0 2px 6px #1d355013; }
+.sake-theme .draw-card::after { content: none; }
+.sake-theme .card-number { top: 11px; left: 12px; color: #8b95a1; font-family: inherit; font-size: 9px; }
+.sake-theme .card-star { display: grid; place-items: center; width: 34px; height: 68px; }
+.sake-theme .card-star svg { display: block; width: 100%; height: 100%; filter: drop-shadow(0 3px 2px #182d4118); }
+.sake-theme .draw-card:not(:disabled):hover { border-color: #8ab7ff; transform: translateY(-3px); box-shadow: 0 6px 12px #235f9a18; }
+.sake-theme .draw-card:not(:disabled):active { transform: scale(.96); }
+.sake-theme .draw-card.selected { background: #e8f3ff; color: #1b64da; border: 2px solid #6ba4ff; box-shadow: none; }
+.sake-theme .draw-card.selected .card-star { display: none; }
+.sake-theme .draw-card.selected .card-number { color: #4c84bb; }
+.sake-theme .draw-card.revealing { animation-name: app-card-pulse; }
+.sake-theme .card-result { font-family: inherit; font-size: 17px; font-weight: 700; }
+.sake-theme .draw-feedback { margin: 22px 0 19px; }
+.sake-theme .board-status { margin-bottom: 6px; font-size: 12px; font-weight: 600; color: #1b64da; }
+.sake-theme .board-hint { font-size: 13px; line-height: 1.6; color: #6b7684; }
+.sake-theme .primary, .sake-theme .outline { min-height: 54px; padding: 15px 20px; border-radius: 15px; font-size: 15px; font-weight: 650; }
+.sake-theme .primary { background: #1b64da; color: #fff; border: 0; }
+.sake-theme .primary:hover:not(:disabled) { background: #185abd; }
+.sake-theme .primary:disabled { background: #e8f3ff; color: #4b74a2; border: 0; }
+.sake-theme .outline { background: #f2f4f6; border: 0; color: #4e5968; }
+.sake-theme .outline:hover { background: #e8ecf0; }
+.sake-theme .text-button { font-size: 13px; min-height: 44px; color: #6b7684; }
+.sake-theme .draw-note { margin-top: 16px; font-size: 11px; color: #6b7684; }
+.sake-theme .share-section { margin-top: 22px; padding: 28px 30px; background: #fff; border-radius: 24px; }
+.sake-theme .share-section h2 { font-size: 17px; font-weight: 650; letter-spacing: -.4px; }
+.sake-theme .share-section p { font-size: 13px; line-height: 1.6; }
+.sake-theme .share-actions { gap: 4px; }
+.sake-theme .share-actions .outline { min-height: 44px; padding: 11px 16px; border-radius: 12px; font-size: 13px; }
+.sake-theme .notices { margin-top: 24px; padding: 0 8px 30px; }
+.sake-theme details { border-color: #e5e8eb; padding: 22px 0; }
+.sake-theme summary { font-size: 13px; color: #4e5968; }
+.sake-theme details ul, .sake-theme details p { font-size: 12px; color: #6b7684; }
+.sake-theme footer { color: #6b7684; }
+.sake-theme footer p { font-size: 11px; }
+.sake-theme dialog { max-width: 460px; padding: 36px 30px 26px; border: 0; border-radius: 28px; background: #fff; box-shadow: 0 25px 90px #17283b18; }
+.sake-theme dialog::backdrop { background: #101f354a; }
+.sake-theme dialog h2 { font-family: inherit; font-size: 25px; font-weight: 700; line-height: 1.45; }
+.sake-theme dialog>p { font-size: 14px; line-height: 1.7; }
+.sake-theme .close-dialog { color: #8b95a1; top: 13px; right: 13px; }
+.sake-theme .dialog-icon, .sake-theme .result-star { width: 56px; height: 56px; background: #e8f3ff; color: #1b64da; border-radius: 18px; font-family: inherit; font-size: 30px; }
+.sake-theme form { margin-top: 26px; }
+.sake-theme label { font-size: 13px; color: #4e5968; }
+.sake-theme input, .sake-theme textarea, .sake-theme select { min-height: 54px; padding: 16px; background: #f2f4f6; border: 1px solid transparent; border-radius: 13px; font-size: 16px; color: #191f28; }
+.sake-theme input:focus, .sake-theme textarea:focus, .sake-theme select:focus { background: #fff; border-color: #1b64da; }
+.sake-theme input::placeholder { color: #8b95a1; }
+.sake-theme .form-error { font-size: 12px; margin: 10px 0; }
+.sake-theme .fine-print { font-size: 11px; }
+.sake-theme .checkbox-label { font-size: 12px; }
+.sake-theme .checkbox-label input { min-height: 18px; height: 18px; width: 18px; padding: 0; border-radius: 5px; accent-color: #1b64da; }
+.sake-theme .consent-details { padding: 12px 0; }
+.sake-theme .consent-details summary { color: #6b7684; font-size: 12px; }
+.sake-theme .result-prize { background: #f2f6fc; border: 0; border-radius: 18px; padding: 24px 18px; font-size: 20px; }
+.sake-theme .success-note { background: #f2f6fc; border-radius: 18px; padding: 20px; font-size: 13px; }
+.sake-theme #story-dialog { max-width: 430px; }
+.sake-theme #story-dialog h2 { font-size: 23px; }
+.sake-theme #story-dialog>p { font-size: 13px; }
+.sake-theme #story-preview { border: 0; border-radius: 14px; }
+.sake-theme .toast { background: #333d4b; border-radius: 14px; font-size: 13px; }
+@keyframes app-card-pulse { 50% { transform: scale(.96); background: #e8f3ff; } }
+@media (max-width: 1140px) {
+  .sake-theme .panel { padding: 27px; }
+  .sake-theme .draw-section>h2 { font-size: 25px; }
+  .sake-theme .prize-value { font-size: 25px; }
+  .sake-theme .share-section { gap: 18px; padding: 26px; }
+}
+@media (max-width: 780px) {
+  .sake-theme .site-header { height: 64px; padding: 0 22px; }
+  .sake-theme .wordmark { gap: 12px; }
+  .sake-theme .wordmark img { width: 116px; }
+  .sake-theme .wordmark span { padding-left: 12px; font-size: 9px; }
+  .sake-theme .shop-link { gap: 8px; font-size: 11px; }
+  .sake-theme .event-main { margin: 0 20px; padding-top: 18px; }
+  .sake-theme .test-banner { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 7px 9px; font-size: 10px; padding: 10px 12px; }
+  .sake-theme .test-banner strong { justify-self: start; font-size: 9px; }
+  .sake-theme .test-code { grid-column: 1/-1; justify-self: start; width: auto; margin: 0; padding: 3px 7px; }
+  .sake-theme .test-code b { font-size: 10px; }
+  .sake-theme .event-intro { display: block; position: relative; padding: 28px 0; }
+  .sake-theme .intro-copy h1 { font-size: 29px; line-height: 1.35; letter-spacing: -1.4px; margin: 9px 0; }
+  .sake-theme .intro-copy h1, .sake-theme .intro-copy .eyebrow { padding-right: 88px; }
+  .sake-theme .intro-copy .eyebrow { font-size: 10px; }
+  .sake-theme .intro-copy p { font-size: 14px; line-height: 1.6; }
+  .intro-vignette { position: absolute; top: 26px; right: 0; width: 80px; height: 68px; }
+  .sake-theme .event-meta { gap: 10px; margin-top: 20px; }
+  .sake-theme .event-meta p { margin: 0; font-size: 12px; }
+  .sake-theme .event-status { font-size: 11px; padding: 6px 9px; }
+  .sake-theme .event-layout, .sake-theme .event-info { gap: 20px; }
+  .sake-theme .panel { padding: 22px; border-radius: 22px; }
+  .sake-theme .section-heading h2 { font-size: 21px; }
+  .sake-theme .section-description { font-size: 14px; }
+  .sake-theme .draw-section>h2 { font-size: 24px; margin-top: 17px; }
+  .sake-theme .draw-heading .eyebrow { font-size: 11px; }
+  .sake-theme .day-pill { font-size: 11px; padding: 6px 8px; }
+  .sake-theme .participation-steps { gap: 7px; margin: 24px 0 21px; }
+  .sake-theme .participation-steps li { font-size: 11px; gap: 5px; }
+  .sake-theme .participation-steps li>span { width: 22px; height: 22px; font-size: 9px; }
+  .sake-theme .card-grid { gap: 10px; padding: 12px; border-radius: 18px; }
+  .sake-theme .draw-card { border-radius: 12px; }
+  .sake-theme .card-star { width: 27px; height: 54px; }
+  .sake-theme .card-number { top: 8px; left: 9px; font-size: 8px; }
+  .sake-theme .prize-item { padding: 22px 0; column-gap: 12px; }
+  .sake-theme .prize-symbol { width: 58px; height: 45px; }
+  .sake-theme .prize-value { font-size: 25px; }
+  .sake-theme .quiet-tag { padding: 5px 8px; }
+  .sake-theme .prize-footnote { margin: 6px -3px -2px; padding: 13px; }
+  .sake-theme .board-hint { font-size: 13px; }
+  .sake-theme .draw-note { font-size: 11px; }
+  .sake-theme .share-section { padding: 24px; margin-top: 20px; border-radius: 22px; }
+  .sake-theme .share-section h2 { font-size: 17px; }
+  .sake-theme .share-section p { font-size: 13px; }
+  .sake-theme .share-actions { gap: 3px; margin-top: 18px; }
+  .sake-theme .share-actions .outline { font-size: 13px; }
+  .sake-theme .share-actions .text-button { font-size: 12px; padding: 10px 8px; }
+  .sake-theme .notices { padding: 0 2px 26px; }
+  .sake-theme dialog { padding: 36px 24px 24px; border-radius: 24px; }
+  .sake-theme dialog h2 { font-size: 24px; }
+  .sake-theme .primary, .sake-theme .outline { font-size: 15px; }
+}
+@media (max-width: 370px) {
+  .sake-theme .event-main { margin: 0 16px; }
+  .sake-theme .site-header { padding: 0 16px; }
+  .sake-theme .wordmark { gap: 8px; }
+  .sake-theme .wordmark span { padding-left: 8px; font-size: 8px; }
+  .sake-theme .shop-link { gap: 4px; font-size: 10px; white-space: nowrap; }
+  .sake-theme .intro-copy h1 { font-size: 26px; }
+  .sake-theme .intro-copy h1, .sake-theme .intro-copy .eyebrow { padding-right: 68px; }
+  .intro-vignette { width: 64px; height: 60px; }
+  .sake-theme .panel { padding: 18px; }
+  .sake-theme .draw-section>h2 { font-size: 22px; }
+  .sake-theme .card-grid { gap: 8px; padding: 10px; }
+  .sake-theme .card-star { width: 24px; height: 48px; }
+  .sake-theme .prize-symbol { width: 52px; height: 42px; }
+  .sake-theme .prize-symbol img { width: 43px; }
+  .sake-theme .prize-value { font-size: 23px; }
+  .sake-theme .participation-steps li { font-size: 10px; gap: 4px; }
+  .sake-theme .quiet-tag { font-size: 10px; padding: 5px 7px; }
+  .sake-theme .share-section { padding: 22px 18px; }
+  .sake-theme .share-actions .text-button { font-size: 11px; }
+}

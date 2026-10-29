@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f4f6">
+  <meta name="description" content="오사케다 구매 고객을 위한 럭키 드로우. 하루 한 번, 집게를 멈추고 오늘의 행운을 뽑아보세요.">
+  <meta property="og:title" content="오사케다 럭키 드로우">
+  <meta property="og:description" content="하루 한 번, 당신의 행운을 뽑아보세요. 구매 고객 전용 이벤트">
+  <title>럭키 드로우 · 오사케다</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/sake.css">
+  <link rel="stylesheet" href="/claw.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body class="event-page sake-theme">
+  <a class="skip-link" href="#draw">이벤트 참여로 바로가기</a>
+  <header class="site-header">
+    <a class="wordmark" href="/" aria-label="오사케다 이벤트 홈"><img src="/osakeda-logo.avif" alt="오사케다" width="200" height="70"><span>EVENT</span></a>
+    <a class="shop-link" href="https://osakeda.com/" target="_blank" rel="noopener">오사케다 스토어 <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="event-main">
+    <div class="test-banner" id="test-banner" hidden><strong>테스트 모드</strong><span>실제 경품은 지급되지 않아요.</span><span class="test-code">참여 코드 <b>OSAKEDA-TEST-03</b></span></div>
+    <section class="event-intro" aria-labelledby="event-title">
+      <div class="intro-copy"><span class="eyebrow">구매 고객 전용 이벤트</span><h1 id="event-title">행운을 고르는 5일</h1><p id="subtitle">오사케다 구매 고객을 위한 럭키 드로우</p></div>
+      <div class="intro-vignette" aria-hidden="true"><svg viewBox="0 0 190 160" focusable="false"><use href="/sake.svg#set"></use></svg></div>
+      <div class="event-meta"><span class="event-status" id="event-status">이벤트 준비 중</span><p id="period">일정을 확인하고 있어요.</p><span class="timezone">한국 시간 기준</span></div>
+    </section>
+    <div class="event-layout">
+      <aside class="event-info">
+        <section class="prizes panel" aria-labelledby="prize-title">
+          <div class="section-heading"><h2 id="prize-title">당첨되면 받을 선물</h2><span class="quiet-tag">당첨 혜택</span></div>
+          <p class="section-description">다음 쇼핑에 쓸 기프트카드를 준비했어요.</p>
+          <div class="prize-list" id="prizes"><p class="empty">선물을 불러오고 있어요.</p></div>
+          <div class="prize-footnote"><span class="tiny-mark" aria-hidden="true">ⓘ</span><p>이벤트 기간 중 한 고객당 최대 1회 당첨</p></div>
+        </section>
+        <section class="how panel" aria-labelledby="how-title">
+          <div class="section-heading"><h2 id="how-title">참여 방법</h2><span class="quiet-tag">하루 한 번</span></div>
+          <ol class="steps"><li><span>1</span><div><h3>구매 고객 코드 확인</h3><p>구매 후 받은 나만의 코드를 입력해 주세요.</p></div></li><li><span>2</span><div><h3>집게를 멈추고 뽑기</h3><p>뽑기 버튼을 눌러 오늘의 행운을 만나보세요.</p></div></li><li><span>3</span><div><h3>당첨 시 이메일 등록</h3><p>선물을 받을 이메일을 남기면 완료예요.</p></div></li></ol>
+        </section>
+      </aside>
+      <section class="draw-section panel" id="draw" aria-labelledby="draw-title">
+        <div class="draw-heading"><span class="eyebrow">하루 한 번의 럭키 드로우</span><span class="day-pill" id="day-pill">준비 중</span></div>
+        <h2 id="draw-title">오늘의 행운을 뽑아보세요</h2><p class="section-description">하루 한 번, 기프트카드에 도전해요.</p>
+        <ol class="participation-steps" aria-label="참여 진행 상태"><li id="step-code" aria-current="step"><span>01</span> 코드 확인</li><li id="step-pick"><span>02</span> 행운 뽑기</li><li id="step-result"><span>03</span> 결과 확인</li></ol>
+        <div class="claw-machine" id="machine" aria-busy="false">
+          <svg class="machine-scene" viewBox="0 0 360 330" aria-hidden="true" focusable="false">
+            <defs>
+              <clipPath id="chamber-clip"><rect width="360" height="330" rx="14"/></clipPath>
+              <g id="lucky-ticket"><path d="M8 0h98q8 0 8 8v16q-8 0-8 8t8 8v16q0 8-8 8H8q-8 0-8-8V40q8 0 8-8t-8-8V8q0-8 8-8Z"/><text x="57" y="39" class="ticket-title">LUCKY</text></g>
+            </defs>
+            <rect width="360" height="330" rx="14" fill="#fff"/>
+            <g clip-path="url(#chamber-clip)">
+              <g id="cards"></g>
+              <g id="claw-travel">
+                <rect x="170" y="-6" width="20" height="38" rx="6" fill="#6296e5"/>
+                <path id="claw-cable" d="M180 32v64" stroke="#6296e5" stroke-width="6"/>
+                <g id="claw-drop">
+                  <g id="claw-ticket"><use href="#lucky-ticket" x="123" y="142"/></g>
+                  <rect x="172" y="78" width="16" height="15" rx="4" fill="#6296e5"/>
+                  <g class="claw-finger finger-left"><path d="M180 100c-24 0-40 16-46 36"/></g>
+                  <g class="claw-finger finger-right"><path d="M180 100c24 0 40 16 46 36"/></g>
+                </g>
+              </g>
+            </g>
+          </svg>
+          <button class="primary full" id="enter-button" disabled>이벤트 불러오는 중…</button>
+        </div>
+        <div class="draw-feedback"><span class="board-status" id="board-status">참여 전</span><p class="board-hint" id="board-hint" role="status" aria-live="polite">구매 후 받은 코드로 참여할 수 있어요.</p></div>
+        <button class="text-button change-code" id="change-code" hidden>다른 참여 코드로 확인</button>
+        <p class="draw-note">매일 오전 0시, 새로운 참여 기회가 열려요.</p>
+      </section>
+    </div>
+    <section class="share-section" aria-labelledby="share-title"><div><h2 id="share-title">친구에게도 이벤트를 알려주세요.</h2><p>이벤트 링크를 공유해 보세요. 참여에는 구매 고객 코드가 필요해요.</p></div><div class="share-actions"><button class="outline" id="share">공유하기 <span aria-hidden="true">↗</span></button><button class="text-button" id="copy-link">링크 복사</button><button class="text-button" id="save-story">스토리 이미지</button></div></section>
+    <section class="notices" aria-label="이벤트 이용 안내">
+      <details><summary>이벤트 유의사항 <span aria-hidden="true">＋</span></summary><ul><li>구매 고객에게 개별 전달된 코드로 참여할 수 있습니다. 코드를 타인에게 공유하지 마세요.</li><li>한국 시간 기준 고객당 하루 1회 참여할 수 있으며, 매일 오전 0시에 참여 기회가 갱신됩니다.</li><li>이벤트 기간 중 한 고객은 최대 1회 당첨될 수 있습니다.</li><li>집게 위치와 당첨 확률은 관계없습니다. 서버 추첨으로 결과가 결정되며, 준비 수량 소진 시 추첨이 마감됩니다.</li><li>당첨 후 같은 코드로 다시 접속하면 결과 확인과 수령 이메일 등록이 가능합니다.</li><li>기프트카드는 운영자가 등록 이메일로 발급합니다.</li><li id="delivery-notice">발급 안내를 불러오는 중입니다.</li><li id="contact-notice" hidden></li></ul></details>
+      <details><summary>개인정보 수집 및 이용 <span aria-hidden="true">＋</span></summary><p id="privacy-notice">안내를 불러오는 중입니다.</p></details>
+    </section>
+  </main>
+  <footer><span>© OSAKEDA</span><p>니혼슈 직구 전문 스토어, 오사케다.</p></footer>
+  <dialog id="code-dialog" aria-labelledby="code-title"><button class="close-dialog" aria-label="닫기">×</button><div class="dialog-icon" aria-hidden="true">→</div><span class="eyebrow">LUCKY DRAW</span><h2 id="code-title">참여 코드를 입력해 주세요.</h2><p>구매 후 받은 코드를 확인해 주세요.<br>같은 코드로 이전 결과도 확인할 수 있어요.</p><form id="code-form"><label for="code-input">참여 코드</label><input id="code-input" name="code" placeholder="OSK-…" required maxlength="120" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="code-error"><p class="form-error" id="code-error" role="alert"></p><button class="primary full" type="submit">확인하고 참여하기 <span aria-hidden="true">→</span></button></form><p class="fine-print">코드는 구매 고객에게 개별 전달됩니다.</p></dialog>
+  <dialog id="result-dialog" aria-labelledby="result-title"><button class="close-dialog" aria-label="닫기">×</button><div class="result-star" id="result-icon" aria-hidden="true">✳</div><span class="eyebrow" id="result-eyebrow">TODAY’S RESULT</span><h2 id="result-title"></h2><p id="result-description"></p><div class="result-prize" id="result-prize" hidden></div><form id="claim-form" hidden><label for="email">기프트카드를 받을 이메일</label><input id="email" type="email" required maxlength="254" placeholder="you@example.com" autocomplete="email" aria-describedby="claim-error"><label class="checkbox-label"><input type="checkbox" id="consent" required><span>경품 발급을 위한 이메일 수집 및 이용에 동의합니다.</span></label><details class="consent-details"><summary>수집 및 이용 내용 확인</summary><p id="claim-privacy"></p></details><p class="form-error" id="claim-error" role="alert"></p><button class="primary full" type="submit">이메일 등록하기</button></form><p id="claim-success" class="success-note" hidden></p><div class="result-actions"><button class="outline full" id="result-story">참여 결과 이미지 만들기</button><button class="text-button" id="result-share">친구에게 이벤트 공유</button></div></dialog>
+  <dialog id="story-dialog" aria-labelledby="story-title"><button class="close-dialog" aria-label="닫기">×</button><h2 id="story-title">스토리에 행운을 담아보세요.</h2><p>이미지를 저장한 뒤 인스타그램에서 올려주세요.</p><img id="story-preview" alt="오사케다 이벤트 스토리 이미지"><button class="primary full" id="download-story">이미지 저장하기 ↓</button><p class="fine-print">스토리에 링크 스티커를 추가하면 친구들이 이벤트를 찾기 쉬워요.</p></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

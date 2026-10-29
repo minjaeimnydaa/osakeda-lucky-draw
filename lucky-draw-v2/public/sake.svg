@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="bottle" viewBox="0 0 48 100">
+    <path d="M19 4h10q2 0 2 2v5q0 2-2 2v18q0 4 4 7l6 4q5 4 5 11v35q0 8-8 8H12q-8 0-8-8V53q0-7 5-11l6-4q4-3 4-7V13q-2 0-2-2V6q0-2 2-2Z" fill="#8cb2ed"/>
+  </symbol>
+  <symbol id="cup" viewBox="0 0 64 56">
+    <path d="M7 12q25 6 50 0l-5 21q-2 11-13 13v4H25v-4q-11-2-13-13Z" fill="#bbd2f6"/>
+  </symbol>
+  <symbol id="set" viewBox="0 0 190 160">
+    <use href="#bottle" x="28" y="3" width="80" height="148"/>
+    <use href="#cup" x="110" y="92" width="66" height="60"/>
+  </symbol>
+</svg>
