@@ -2,6 +2,8 @@
 /*
 !/.gitignore
 !/README.md
+!/TRANSFER.md
+!/tools/
 !/lucky-draw/
 !/lucky-draw-v2/
 
@@ -14,6 +16,9 @@
 **/coverage/
 **/previews/
 **/exports/
+**/private-transfer/
+**/*.osakeda-backup
+**/restore-key*.txt
 **/*.sqlite*
 **/*.db
 **/*.db-*
