@@ -34,7 +34,7 @@ node server.js
 ## Vercel에 공개하기
 
 1. 이 폴더를 비공개 GitHub 저장소에 올립니다. `.env.local`, `.data/`는 절대 올리지 않습니다.
-2. Vercel에서 저장소를 연결합니다. 상위 폴더를 올렸다면 Root Directory를 `lucky-draw`로 지정합니다. Framework는 Other, Node.js는 24.x, Output Directory는 `public`입니다. 빌드 명령은 필요 없습니다. 의존성은 Vercel이 설치합니다.
+2. Vercel에서 저장소를 연결합니다. 상위 폴더를 올렸다면 Root Directory를 `lucky-draw-v2`로 지정합니다. Framework는 Other, Node.js는 24.x, Output Directory는 `public`입니다. `vercel.json`의 빌드 명령 `npm test`로 기존 검증을 실행하고, 성공한 경우 `public`을 배포합니다. 의존성은 Vercel이 설치합니다.
 3. Neon 또는 Supabase 등 관리형 PostgreSQL을 만들고 TLS가 설정된 서버용 연결 문자열을 준비합니다. `DATABASE_URL`에 입력합니다. DB 접속은 서버에서만 합니다. Supabase를 쓸 경우 Data API 공개 테이블과 분리된 전용 DB 사용자/스키마를 권장합니다.
 4. Vercel 환경 변수에 `DATABASE_URL`, `SESSION_SECRET`(32자 이상 무작위 값), `ADMIN_PASSWORD`(16자 이상 강한 비밀번호)를 설정합니다. SESSION_SECRET을 바꾸면 세션이 만료되고 고객 해시가 달라지므로 진행 중 변경하지 마세요.
 5. 배포 후 `/admin`에서 로그인합니다. 운영 DB에는 테스트 코드 없는 **준비 중** 이벤트가 별도로 생성됩니다. 경품과 확률은 기본 샘플이므로 실제 지급할 경품으로 수정하세요.
