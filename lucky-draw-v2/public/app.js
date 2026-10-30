@@ -2,7 +2,8 @@ import { $, esc, api, toast, formatDate, download } from './shared.js';
 import { getDrawState } from './participation.js';
 const slug = new URLSearchParams(location.search).get('event') || 'lucky-days';
 let event; let result; let busy = false; let storyBlob; let storyUrl; let loadVersion = 0;
-let needsSync = false; let syncBusy = false; let enterConfirmed = false; let claimBusy = false; let claimDraftFor = null;
+let needsSync = false; let syncBusy = false; let enterBusy = false; let enterConfirmed = false; let claimBusy = false; let claimDraftFor = null;
+const actionPending = () => busy || enterBusy || claimBusy || syncBusy;
 const codeDialog = $('#code-dialog'); const resultDialog = $('#result-dialog');
 const machine = $('#machine'); const travel = $('#claw-travel');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -10,7 +11,7 @@ const smallScreen = matchMedia('(max-width: 780px)');
 let actionOnscreen = true;
 function updateDock() {
   const primary = $('#enter-button');
-  $('#mobile-dock').hidden = !event || actionOnscreen || !smallScreen.matches || (primary.disabled && !busy && !syncBusy && !claimBusy) || !!document.querySelector('dialog[open]');
+  $('#mobile-dock').hidden = !event || actionOnscreen || !smallScreen.matches || (primary.disabled && !actionPending()) || !!document.querySelector('dialog[open]');
   $('#dock-button').textContent = primary.textContent;
   $('#dock-button').disabled = primary.disabled;
   $('#dock-status').textContent = $('#board-status').textContent;
@@ -22,7 +23,7 @@ if (typeof IntersectionObserver !== 'undefined') {
 }
 $('#dock-button').addEventListener('click', () => $('#enter-button').click());
 document.querySelectorAll('dialog').forEach(dialog => dialog.addEventListener('close', updateDock));
-function openCode() { if (claimBusy) return; codeDialog.showModal(); updateDock(); }
+function openCode() { if (actionPending()) return; codeDialog.showModal(); updateDock(); }
 function connectionNote(message) { $('#connection-message').textContent = message; $('#connection-note').hidden = false; }
 const tickets = [[12,211,13],[67,204,27],[214,211,-19],[-28,265,-20],[40,280,18],[201,276,-16],[278,250,28],[102,298,-10],[126,245,-10]];
 $('#cards').innerHTML = tickets.map(([x,y,angle],i) => `<g class="machine-ticket" data-card="${i+1}" transform="translate(${x} ${y}) rotate(${angle} 57 32)"><use href="#lucky-ticket"/></g>`).join('');
@@ -32,7 +33,7 @@ function updateMachine() {
   machine.classList.toggle('is-complete', !!result);
   machine.classList.remove('is-lifting');
   document.querySelectorAll('.machine-ticket').forEach(t => t.classList.toggle('is-picked', !!result && +t.dataset.card === result.card));
-  const canMove = !needsSync && !result && event?.status === 'active' && !event.soldOut && !reducedMotion.matches;
+  const canMove = !enterBusy && !needsSync && !result && event?.status === 'active' && !event.soldOut && !reducedMotion.matches;
   if (!canMove) { idleMotion?.cancel(); idleMotion = null; }
   else if (!idleMotion) idleMotion = travel.animate([{ transform:'translateX(-110px)' }, { transform:'translateX(110px)' }], { duration:2600, direction:'alternate', iterations:Infinity, easing:'ease-in-out' });
 }
@@ -55,8 +56,9 @@ async function load(committedResult = null) {
   $('#subtitle').textContent = event.subtitle;
   $('#period').textContent = `${formatDate(event.start)} — ${formatDate(new Date(Date.parse(event.end) - 1))}`;
   $('#test-banner').hidden = !event.test;
-  const total = event.prizes.reduce((sum, p) => sum + p.total, 0);
-  $('#draw-benefit').textContent = event.prizes[0] ? `1등 ${event.prizes[0].detail} · 총 ${total}명` : '당첨 혜택을 확인해 주세요.';
+  const remaining = event.prizes.reduce((sum, p) => sum + p.remaining, 0);
+  const available = event.prizes.find(p => p.remaining > 0);
+  $('#draw-benefit').textContent = available ? `${available.rank}등 ${available.detail} · 남은 경품 ${remaining}개` : '준비된 경품이 모두 소진되었어요.';
   $('#prizes').innerHTML = event.prizes.map(p => `<article class="prize-item${p.remaining === 0 ? ' is-exhausted' : ''}"><span class="rank quiet-tag">${p.rank}등</span><div class="prize-symbol" aria-hidden="true"><img src="/osakeda-logo.avif" alt="" width="200" height="70"><span>GIFT CARD</span></div><div class="prize-copy"><h3>${esc(p.name)}</h3><p class="prize-value">${esc(p.detail)}</p></div><span class="quantity">${p.remaining === 0 ? '수량 소진' : `총 ${p.total}명`}</span></article>`).join('');
   $('#delivery-notice').textContent = event.delivery || '경품 발급 일정은 이벤트 공개 시 안내됩니다.';
   $('#privacy-notice').textContent = event.privacy || '개인정보 수집 안내가 준비 중입니다.';
@@ -75,31 +77,34 @@ function updateBoard() {
   ['step-code','step-pick','step-result'].forEach((id,i) => { const step = $(`#${id}`); step.classList.toggle('completed', i < stage); if (i === stage) step.setAttribute('aria-current', 'step'); else step.removeAttribute('aria-current'); });
   $('#day-pill').textContent = event.status === 'active' ? `${Math.min(event.day, event.days)}일차 / ${event.days}일간의 행운` : (states[event.status] || '이벤트 준비 중');
   $('#change-code').hidden = !event.identified;
-  $('#change-code').disabled = busy || claimBusy;
-  const button = $('#enter-button'); button.disabled = state.disabled || busy || claimBusy || syncBusy;
+  $('#change-code').disabled = actionPending();
+  $('#retry-load').disabled = actionPending();
+  for (const id of ['share','copy-link','save-story','result-share','result-story','download-story']) $(`#${id}`).disabled = actionPending();
+  const button = $('#enter-button'); button.disabled = state.disabled || actionPending();
   button.textContent = state.button;
   $('#board-status').textContent = state.status; $('#board-hint').textContent = state.hint;
   $('.draw-feedback').dataset.phase = state.phase;
-  if (needsSync) { button.disabled = busy || syncBusy; button.textContent = '참여 상태 다시 확인'; $('#board-status').textContent = '참여 상태 확인 필요'; $('#board-hint').textContent = '연결이 지연되고 있어요. 저장된 참여 상태를 먼저 확인해 주세요.'; }
+  if (needsSync) { button.disabled = actionPending(); button.textContent = '참여 상태 다시 확인'; $('#board-status').textContent = '참여 상태 확인 필요'; $('#board-hint').textContent = '연결이 지연되고 있어요. 저장된 참여 상태를 먼저 확인해 주세요.'; }
   if (busy) { button.disabled = true; button.textContent = '행운을 뽑고 있어요…'; $('#board-status').textContent = '두근두근, 추첨 중'; }
   if (claimBusy) { button.disabled = true; button.textContent = '이메일을 등록하고 있어요…'; }
+  if (enterBusy) { button.disabled = true; button.textContent = '참여 코드를 확인하고 있어요…'; $('#board-status').textContent = '코드 확인 중'; }
   $('.draw-note').textContent = state.note;
   $('#step-result').innerHTML = `<span>03</span> ${state.phase === 'claim' ? '이메일 등록' : '결과 확인'}`;
   updateMachine(); updateDock();
 }
 async function retryLoad() {
-  if (busy || claimBusy || syncBusy) return;
+  if (actionPending()) return;
   syncBusy = true; $('#retry-load').disabled = true; if (event) updateBoard();
   try { await load(result?.prize ? result : null); toast('참여 상태를 다시 확인했어요.'); }
   catch (err) { connectionNote(err.message); }
   finally { syncBusy = false; $('#retry-load').disabled = false; if (event) updateBoard(); }
 }
 $('#retry-load').addEventListener('click', retryLoad);
-$('#enter-button').addEventListener('click', () => { if (busy || claimBusy || syncBusy) return; if (!event || needsSync) { retryLoad(); return; } if (result) showResult(); else if (event.identified && event.status === 'active' && !event.soldOut) pick(); else openCode(); });
-$('#change-code').addEventListener('click', () => { if (!busy && !claimBusy) openCode(); });
-$('#code-input').addEventListener('input', () => { enterConfirmed = false; $('#code-error').textContent = ''; $('#code-input').removeAttribute('aria-invalid'); $('#code-form button[type="submit"]').textContent = '확인하고 참여하기'; });
+$('#enter-button').addEventListener('click', () => { if (actionPending()) return; if (!event || needsSync) { retryLoad(); return; } if (result) showResult(); else if (event.identified && event.status === 'active' && !event.soldOut) pick(); else openCode(); });
+$('#change-code').addEventListener('click', openCode);
+$('#code-input').addEventListener('input', () => { if (enterBusy) return; enterConfirmed = false; $('#code-error').textContent = ''; $('#code-input').removeAttribute('aria-invalid'); $('#code-form button[type="submit"]').textContent = '확인하고 참여하기'; });
 $('#code-form').addEventListener('submit', async e => {
-  e.preventDefault(); if (busy || claimBusy) return; ++loadVersion; const button = e.submitter; button.disabled = true; $('#code-error').textContent = '';
+  e.preventDefault(); if (actionPending()) return; enterBusy = true; ++loadVersion; const button = e.submitter || $('#code-form button[type="submit"]'); button.disabled = true; button.textContent = enterConfirmed ? '참여 상태를 확인하고 있어요…' : '코드를 확인하고 있어요…'; $('#code-input').disabled = true; $('#code-form').setAttribute('aria-busy', 'true'); $('#code-error').textContent = ''; if (event) updateBoard();
   try {
     if (!enterConfirmed) { await api('enter', { code:$('#code-input').value.trim().toUpperCase() }, slug); enterConfirmed = true; needsSync = true; result = null; }
     await load(); enterConfirmed = false; codeDialog.close(); $('#code-input').value = ''; $('#code-input').removeAttribute('aria-invalid');
@@ -109,10 +114,10 @@ $('#code-form').addEventListener('submit', async e => {
   } catch (err) {
     if (enterConfirmed) { $('#code-error').textContent = '코드는 확인됐어요. 다시 누르면 참여 상태만 확인해요.'; connectionNote('코드는 확인됐지만 참여 상태를 아직 불러오지 못했어요.'); }
     else { $('#code-error').textContent = err.message; if (err.status === 400 || err.status === 401) $('#code-input').setAttribute('aria-invalid', 'true'); else $('#code-input').removeAttribute('aria-invalid'); if (err.uncertain) { needsSync = true; connectionNote(err.message); } }
-  } finally { button.disabled = false; button.textContent = enterConfirmed ? '참여 상태 다시 확인' : '확인하고 참여하기'; if (event) updateBoard(); }
+  } finally { enterBusy = false; $('#code-input').disabled = false; $('#code-form').setAttribute('aria-busy', 'false'); button.disabled = false; button.textContent = enterConfirmed ? '참여 상태 다시 확인' : '확인하고 참여하기'; if (event) updateBoard(); }
 });
 async function pick() {
-  if (busy || claimBusy || needsSync || result || !event?.identified || event.status !== 'active' || event.soldOut) return;
+  if (actionPending() || needsSync || result || !event?.identified || event.status !== 'active' || event.soldOut) return;
   const x = new DOMMatrix(getComputedStyle(travel).transform).m41;
   const card = Math.max(1, Math.min(9, Math.floor((x+110)/220*9)+1));
   busy = true; ++loadVersion; updateBoard(); idleMotion?.cancel(); idleMotion = null;
@@ -175,12 +180,15 @@ function showResult() {
   $('#claim-success').textContent = result.fulfilled ? `${result.email} 주소로 경품 발급이 완료되었어요.` : `${result.email || ''}\n수령 이메일이 등록되었어요. 안내된 일정에 따라 발급해 드릴게요.`;
   $('#claim-error').textContent = '';
   $('#reverify-code').hidden = true;
+  $('#result-dismiss').hidden = win && !result.claimed;
+  $('#result-actions').hidden = win && !result.claimed;
   if (!resultDialog.open) resultDialog.showModal();
   updateDock();
 }
-$('#reverify-code').addEventListener('click', () => { claimDraftFor = result?.id; resultDialog.close(); openCode(); });
+$('#result-dismiss').addEventListener('click', () => { resultDialog.close(); updateDock(); });
+$('#reverify-code').addEventListener('click', () => { if (actionPending()) return; claimDraftFor = result?.id; resultDialog.close(); openCode(); });
 $('#claim-form').addEventListener('submit', async e => {
-  e.preventDefault(); if (claimBusy || busy) return; claimBusy = true; const button = e.submitter; button.disabled = true; $('#claim-error').textContent = ''; updateBoard();
+  e.preventDefault(); if (actionPending()) return; claimBusy = true; const button = e.submitter; button.disabled = true; $('#claim-error').textContent = ''; updateBoard();
   try {
     await api('claim', { email:$('#email').value, consent:$('#consent').checked }, slug);
     result = { ...result, claimed:true, email:null };
@@ -194,17 +202,20 @@ $('#claim-form').addEventListener('submit', async e => {
 });
 function shareUrl() { const url = new URL('/', location.origin); url.searchParams.set('event', slug); return url.href; }
 async function copy() {
+  if (actionPending()) return;
   try { await navigator.clipboard.writeText(shareUrl()); toast('이벤트 링크를 복사했어요.'); }
   catch { toast(`이 주소를 복사해 주세요: ${shareUrl()}`); }
 }
 async function share() {
+  if (actionPending()) return;
   const data = { title: event?.title || '오사케다 럭키 드로우', text:'매일 한 번, 당신의 행운을 뽑아보세요. 구매 고객 전용 이벤트', url:shareUrl() };
   if (navigator.share) { try { await navigator.share(data); } catch (err) { if (err.name !== 'AbortError') await copy(); } } else await copy();
 }
 async function saveStory(withResult = false) {
-  if (!event) return;
+  if (!event || actionPending()) return;
   const logo = document.querySelector('.wordmark img');
   await Promise.all([logo.decode(), document.fonts.ready]);
+  if (actionPending()) return;
   const canvas = document.createElement('canvas'); canvas.width = 1080; canvas.height = 1920;
   const ctx = canvas.getContext('2d'); ctx.fillStyle = '#f2f4f6'; ctx.fillRect(0,0,1080,1920);
   ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.roundRect(70,70,940,1780,54); ctx.fill();
@@ -225,6 +236,7 @@ async function saveStory(withResult = false) {
   if (event.test) { ctx.fillStyle = '#ad453b'; ctx.fillText('테스트 이미지 · 실제 경품 지급 없음',540,1720); }
   ctx.fillStyle = '#777d71'; ctx.font = '22px Arial'; ctx.fillText(new URL(shareUrl()).host,540,1830,950);
   const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+  if (actionPending()) return;
   if (!blob) return toast('이미지를 만들지 못했어요. 다시 시도해 주세요.');
   storyBlob = blob;
   if (storyUrl) URL.revokeObjectURL(storyUrl);
@@ -235,8 +247,8 @@ async function saveStory(withResult = false) {
 }
 $('#share').addEventListener('click', share); $('#result-share').addEventListener('click', share); $('#copy-link').addEventListener('click', copy);
 $('#save-story').addEventListener('click', () => saveStory().catch(() => toast('이미지를 만들지 못했어요. 다시 시도해 주세요.'))); $('#result-story').addEventListener('click', () => saveStory(true).catch(() => toast('이미지를 만들지 못했어요. 다시 시도해 주세요.')));
-$('#download-story').addEventListener('click', () => { if (storyBlob) download(storyBlob, 'osakeda-lucky-story.png'); });
+$('#download-story').addEventListener('click', () => { if (storyBlob && !actionPending()) download(storyBlob, 'osakeda-lucky-story.png'); });
 load().catch(err => { $('#period').textContent = '일정을 불러오지 못했어요'; $('#enter-button').textContent = '다시 불러오기'; $('#enter-button').disabled = false; $('#board-hint').textContent = err.message; connectionNote(err.message); });
 // Refresh participation status after midnight, tab restoration, or returning from Instagram.
-document.addEventListener('visibilitychange', () => { if (!document.hidden && !busy && !claimBusy && !document.querySelector('dialog[open]')) load().catch(() => {}); });
-setInterval(() => { if (event && !busy && !claimBusy && !document.hidden && !document.querySelector('dialog[open]')) load().catch(() => {}); }, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !actionPending() && !document.querySelector('dialog[open]')) load().catch(() => {}); });
+setInterval(() => { if (event && !actionPending() && !document.hidden && !document.querySelector('dialog[open]')) load().catch(() => {}); }, 60000);

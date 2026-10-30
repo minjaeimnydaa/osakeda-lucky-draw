@@ -2,7 +2,7 @@
 .v2-theme .version-link { margin-left: auto; color: #4e5968; font-size: 11px; white-space: nowrap; }
 .v2-theme .test-code { margin-left: 0; }
 .v2-theme .draw-benefit { color: #4e5968; font-weight: 600; }
-.v2-theme .fair-draw { margin-top: 13px; color: #4e668a; font-size: 11px; line-height: 1.6; text-align: center; }
+.v2-theme .fair-draw { margin-top: 13px; color: #4e668a; font-size: 12px; line-height: 1.6; text-align: center; }
 .v2-theme .prize-item.is-exhausted .quantity { color: #8b95a1; }
 .v2-theme .draw-feedback[data-phase='claim'] { padding: 14px; border-radius: 12px; background: #e8f3ff; }
 .v2-theme .draw-feedback[data-phase='claim'] .board-hint { color: #4e5968; }
@@ -11,6 +11,15 @@
 .v2-theme .code-help a { display: inline-flex; align-items: center; min-height: 44px; color: #1b64da; font-size: 12px; }
 .v2-theme input[aria-invalid='true'] { border-color: #d64842; }
 .v2-theme .reverify-code { margin-top: 10px; }
+.v2-theme dialog { overscroll-behavior: contain; }
+.v2-theme .close-dialog { top: 8px; right: 8px; width: 44px; height: 44px; border-radius: 50%; }
+.v2-theme .close-dialog:hover { background: #f2f4f6; }
+.v2-theme .result-dismiss { margin-top: 24px; }
+.v2-theme .result-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; padding-top: 10px; border-top: 1px solid #edf0f3; }
+.v2-theme .result-actions .text-button { min-height: 44px; font-size: 12px; }
+.v2-theme summary { min-height: 44px; }
+.v2-theme .notices details { padding: 10px 0; }
+.v2-theme .draw-note, .v2-theme .prize-footnote p { font-size: 12px; line-height: 1.7; }
 .v2-theme .connection-note { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 14px; padding: 12px 16px; border-radius: 12px; background: #fff5e5; color: #7b5b27; }
 .v2-theme .connection-note p { font-size: 12px; }
 .v2-theme .connection-note button { flex-shrink: 0; color: #7b5b27; }
@@ -20,7 +29,7 @@
   .v2-theme .version-link { grid-column: 2; grid-row: 2; justify-self: end; font-size: 10px; }
   .v2-theme .test-code { grid-column: 1; grid-row: 2; }
   .v2-theme .test-code b { font-size: 9px; }
-  .v2-theme .fair-draw { font-size: 10px; }
+  .v2-theme .participation-steps li { font-size: 12px; }
   .v2-theme .connection-note { align-items: flex-start; }
   .mobile-dock { position: fixed; z-index: 20; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 12px 20px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; background: #fffffffa; }
   .mobile-dock>span { flex: 1; min-width: 0; font-size: 12px; color: #4e5968; line-height: 1.5; }
